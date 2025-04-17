@@ -1,34 +1,27 @@
-# Node.js
-node_modules/
-.next/
-out/
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+.pnpm-debug.log*
 
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-venv/
-env/
-.env
+# env files
+.env*
 
-# Model files (these are usually large)
-*.pt
-*.pth
-*.onnx
-*.bin
+# vercel
+.vercel
 
-# OS specific
-.DS_Store
-Thumbs.db
-
-# IDE
-.idea/
-.vscode/
-*.swp
-*.swo
-
-# Project specific
-segmentation_results/
+# typescript
+*.tsbuildinfo
+next-env.d.ts
