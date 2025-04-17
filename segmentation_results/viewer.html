@@ -1,0 +1,96 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dental X-ray Segmentation</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { display: flex; }
+        .image-container { flex: 2; }
+        .sidebar { flex: 1; min-width: 300px; margin-left: 20px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
+        .thumbnail { width: 100px; height: 100px; object-fit: cover; margin: 5px; cursor: pointer; border: 2px solid transparent; }
+        .thumbnail:hover { border-color: #0066cc; }
+        .selected { border-color: #0066cc; }
+        #main-image { max-width: 100%; max-height: 70vh; }
+        .class-label { font-weight: bold; margin-top: 15px; }
+        .info-box { background-color: #f0f0f0; padding: 10px; border-radius: 5px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Dental X-ray Segmentation Viewer</h1>
+    <div class="container">
+        <div class="image-container">
+            <img id="main-image" src="original.png" alt="Dental X-ray">
+        </div>
+        <div class="sidebar">
+            <h2>Detected Features</h2>
+            <div class="info-box" id="info-panel">
+                Click on a thumbnail to view segmentation
+            </div>
+            <h3>Views</h3>
+            <div>
+                <img class="thumbnail selected" src="original.png" onclick="showImage('original.png', 'Original Image')" alt="Original">
+                <img class="thumbnail" src="detection.png" onclick="showImage('detection.png', 'Detection Results')" alt="Detections">
+            </div>
+            <h3>Segmentations</h3>
+            <div id="thumbnails">
+<img class="thumbnail" src="0_Missing_teeth.png" onclick="showMask(0)" alt="Missing teeth">
+<img class="thumbnail" src="1_Filling.png" onclick="showMask(1)" alt="Filling">
+<img class="thumbnail" src="2_Caries.png" onclick="showMask(2)" alt="Caries">
+<img class="thumbnail" src="3_Filling.png" onclick="showMask(3)" alt="Filling">
+<img class="thumbnail" src="4_Missing_teeth.png" onclick="showMask(4)" alt="Missing teeth">
+<img class="thumbnail" src="5_Filling.png" onclick="showMask(5)" alt="Filling">
+<img class="thumbnail" src="6_Root_Canal_Treatment.png" onclick="showMask(6)" alt="Root Canal Treatment">
+<img class="thumbnail" src="7_Filling.png" onclick="showMask(7)" alt="Filling">
+<img class="thumbnail" src="8_Root_Canal_Treatment.png" onclick="showMask(8)" alt="Root Canal Treatment">
+<img class="thumbnail" src="9_Root_Canal_Treatment.png" onclick="showMask(9)" alt="Root Canal Treatment">
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mask data
+        const maskData = [{"id": 0, "filename": "0_Missing_teeth.png", "class": "Missing teeth", "confidence": 0.6071683168411255, "box": [1024.5533447265625, 911.2338256835938, 1165.25244140625, 1034.4962158203125]}, {"id": 1, "filename": "1_Filling.png", "class": "Filling", "confidence": 0.5521461367607117, "box": [1185.5126953125, 758.6495971679688, 1251.4053955078125, 845.8850708007812]}, {"id": 2, "filename": "2_Caries.png", "class": "Caries", "confidence": 0.44041168689727783, "box": [1700.25830078125, 737.6268310546875, 1760.7528076171875, 837.454833984375]}, {"id": 3, "filename": "3_Filling.png", "class": "Filling", "confidence": 0.4196149408817291, "box": [1862.6243896484375, 708.4744262695312, 1953.8277587890625, 844.2314453125]}, {"id": 4, "filename": "4_Missing_teeth.png", "class": "Missing teeth", "confidence": 0.3193444013595581, "box": [1830.85693359375, 929.9064331054688, 1933.8682861328125, 1014.2932739257812]}, {"id": 5, "filename": "5_Filling.png", "class": "Filling", "confidence": 0.2873057425022125, "box": [1865.3079833984375, 633.0921020507812, 1956.3387451171875, 837.93310546875]}, {"id": 6, "filename": "6_Root_Canal_Treatment.png", "class": "Root Canal Treatment", "confidence": 0.2853458821773529, "box": [1193.59423828125, 617.5238037109375, 1227.869873046875, 793.0017700195312]}, {"id": 7, "filename": "7_Filling.png", "class": "Filling", "confidence": 0.2792060077190399, "box": [1996.1495361328125, 751.7900390625, 2091.635498046875, 813.5181274414062]}, {"id": 8, "filename": "8_Root_Canal_Treatment.png", "class": "Root Canal Treatment", "confidence": 0.27167001366615295, "box": [1871.880859375, 622.74365234375, 1901.193115234375, 750.4734497070312]}, {"id": 9, "filename": "9_Root_Canal_Treatment.png", "class": "Root Canal Treatment", "confidence": 0.2610004246234894, "box": [1890.39453125, 610.5955810546875, 1909.8834228515625, 725.371826171875]}];
+        
+        function showImage(src, title) {
+            document.getElementById('main-image').src = src;
+            document.getElementById('info-panel').innerHTML = title;
+            
+            // Update selected thumbnail
+            const thumbnails = document.getElementsByClassName('thumbnail');
+            for (let i = 0; i < thumbnails.length; i++) {
+                if (thumbnails[i].src.endsWith(src)) {
+                    thumbnails[i].classList.add('selected');
+                } else {
+                    thumbnails[i].classList.remove('selected');
+                }
+            }
+        }
+        
+        function showMask(id) {
+            const mask = maskData.find(m => m.id === id);
+            document.getElementById('main-image').src = mask.filename;
+            
+            // Update selected thumbnail
+            const thumbnails = document.getElementsByClassName('thumbnail');
+            for (let i = 0; i < thumbnails.length; i++) {
+                if (thumbnails[i].src.endsWith(mask.filename)) {
+                    thumbnails[i].classList.add('selected');
+                } else {
+                    thumbnails[i].classList.remove('selected');
+                }
+            }
+            
+            // Show mask information
+            let infoHtml = `<div class="class-label">${mask.class}</div>`;
+            infoHtml += `<p>Confidence: ${(mask.confidence * 100).toFixed(2)}%</p>`;
+            infoHtml += `<p>Bounding Box:<br>`;
+            infoHtml += `X1, Y1: (${mask.box[0].toFixed(1)}, ${mask.box[1].toFixed(1)})<br>`;
+            infoHtml += `X2, Y2: (${mask.box[2].toFixed(1)}, ${mask.box[3].toFixed(1)})</p>`;
+            
+            document.getElementById('info-panel').innerHTML = infoHtml;
+        }
+    </script>
+</body>
+</html>
